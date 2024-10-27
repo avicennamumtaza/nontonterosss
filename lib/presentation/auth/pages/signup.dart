@@ -1,12 +1,16 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:nontonterosss/common/helper/message/display_message.dart';
 import 'package:nontonterosss/common/helper/navigation/app_navigator.dart';
-import 'package:nontonterosss/core/configs/theme/app_colors.dart';
+import 'package:nontonterosss/data/auth/models/signup_req_params.dart';
+import 'package:nontonterosss/domain/auth/usecases/signup.dart';
 import 'package:nontonterosss/presentation/auth/pages/signin.dart';
-import 'package:reactive_button/reactive_button.dart';
+import 'package:nontonterosss/service_locator.dart';
 
 class SignupPage extends StatelessWidget {
-  const SignupPage({super.key});
+  SignupPage({super.key});
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +31,7 @@ class SignupPage extends StatelessWidget {
             const SizedBox(height: 15),
             _passwordField(),
             const SizedBox(height: 30),
-            _signupButton(),
+            _signupButton(context),
             const SizedBox(height: 10),
             _signinText(context),
           ],
@@ -48,7 +52,8 @@ class SignupPage extends StatelessWidget {
 
   Widget _emailField() {
     return TextField(
-      decoration: InputDecoration(
+      controller: _emailController,
+      decoration: const InputDecoration(
         hintText: "Email",
       ),
     );
@@ -56,20 +61,49 @@ class SignupPage extends StatelessWidget {
 
   Widget _passwordField() {
     return TextField(
-      decoration: InputDecoration(
+      controller: _passwordController,
+      decoration: const InputDecoration(
         hintText: "Password",
       ),
+      obscureText: true,
     );
   }
 
-  Widget _signupButton() {
-    return ReactiveButton(
-      title: "Sign Up",
-      // width: double.negativeInfinity,
-      activeColor: Colors.yellow.shade800,
-      onPressed: () async {},
-      onSuccess: () {},
-      onFailure: (error) {},
+  Widget _signupButton(BuildContext context) {
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.yellow.shade800, // warna tombol
+        minimumSize: const Size(double.infinity, 50), // ukuran tombol
+      ),
+      onPressed: () async {
+        try {
+          final result = await sl<SignupUseCase>().call(
+            params: SignupReqParams(
+              email: _emailController.text,
+              password: _passwordController.text,
+            ),
+          );
+          result.fold(
+            (failure) {
+              DisplayMessage.errorMessage(context, failure.toString());
+            },
+            (success) {
+              AppNavigator.pushAndRemove(
+                context,
+                SigninPage(),
+              );
+            },
+          );
+        } catch (error) {
+          DisplayMessage.errorMessage(context, error.toString());
+        }
+      },
+      child: const Text(
+        "Sign Up",
+        style: TextStyle(
+          color: Colors.white,
+        ),
+      ),
     );
   }
 
@@ -85,9 +119,10 @@ class SignupPage extends StatelessWidget {
             style: const TextStyle(
               color: Colors.blue,
             ),
-            recognizer: TapGestureRecognizer()..onTap=(){
-              AppNavigator.push(context, const SigninPage());
-            }
+            recognizer: TapGestureRecognizer()
+              ..onTap = () {
+                AppNavigator.push(context, SigninPage());
+              },
           ),
         ],
       ),
