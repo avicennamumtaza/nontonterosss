@@ -6,12 +6,12 @@ import 'package:nontonterosss/data/auth/models/signin_req_params.dart';
 import 'package:nontonterosss/data/auth/models/signup_req_params.dart';
 import 'package:nontonterosss/service_locator.dart';
 
-abstract class AuthApiService {
+abstract class AuthService {
   Future<Either> signup(SignupReqParams params);
   Future<Either> signin(SigninReqParams params);
 }
 
-class AuthApiServiceImpl extends AuthApiService {
+class AuthApiServiceImpl extends AuthService {
   @override
   Future<Either> signup(SignupReqParams params) async {
     try {
@@ -39,7 +39,7 @@ class AuthApiServiceImpl extends AuthApiService {
   }
 }
 
-// class AuthFirebaseServiceImpl extends AuthApiService {
+// class AuthFirebaseServiceImpl extends AuthService {
 //   @override
 //   Future<Either> signup(SignupReqParams params) {
 //     // implementation of firebase auth logic
