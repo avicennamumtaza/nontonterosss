@@ -1,3 +1,5 @@
+import 'package:nontonterosss/core/configs/assets/app_images.dart';
+
 class MovieEntity {
   MovieEntity({
     required this.backdropPath,
@@ -32,6 +34,10 @@ class MovieEntity {
   final bool? video;
   final double? voteAverage;
   final int? voteCount;
+
+  String get providePosterPath => posterPath != null
+      ? AppImages.basePath + posterPath!
+      : AppImages.defaultImage;
 
   factory MovieEntity.fromJson(Map<String, dynamic> json) {
     return MovieEntity(

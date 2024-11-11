@@ -70,7 +70,6 @@ class SigninPage extends StatelessWidget {
       ),
     );
   }
-
   
   Widget _signinButton(BuildContext context) {
     return ElevatedButton(
